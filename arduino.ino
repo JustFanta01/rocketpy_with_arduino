@@ -223,8 +223,8 @@ static void handle_sim_payload(const uint8_t* payload, uint8_t len) {
   if (len != SIM_PAYLOAD_LEN) {
     send_cmd_printf("E%d", ERR_MISMATCH_SIM_PAYLOAD_LEN);
     return;
-
   }
+  
   SimulationPayload28B p;
   memcpy(&p, payload, sizeof(p));
   // print_sensors(p);
