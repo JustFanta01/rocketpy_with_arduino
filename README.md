@@ -51,3 +51,39 @@ pip install .
 - ```bash
   python3 Reanalysis_v10.py
   ```
+
+
+### Example of console output, with sampling_rate=20Hz (50ms):
+```bash
+t_sim = 0
+t_sim = 1.0
+t_sim = 2.0
+t_sim = 3.0
+t_sim = 4.0
+t_sim = 5.0
+[ESP32_cmd]: deployment_level=0.0
+[ESP32_cmd]: deployment_level=0.009999999776482582
+[ESP32_cmd]: deployment_level=0.019999999552965164
+[ESP32_cmd]: deployment_level=0.029999999329447746
+t_sim = 6.0
+...
+t_sim = 12.0
+t_sim = 13.0
+t_sim = 14.0
+t_sim = 15.0
+[ESP32_cmd]: 'drogue_deployed'
+t_sim = 15.950000000000001
+t_sim = 16.95
+t_sim = 17.95
+t_sim = 18.95
+...
+t_sim = 111.95
+t_sim = 112.95
+[ESP32_cmd] 'main_deployed'
+t_sim = 113.9
+t_sim = 114.9
+...
+t_sim = 152.9
+t_sim = 153.9
+Flight... COMPLETED
+```
