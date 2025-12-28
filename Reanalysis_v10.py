@@ -49,11 +49,11 @@ env.set_date((2025, 10, 13, 16))  # Hour given in UTC time (yyyy/mm/dd/hh)
 env.set_atmospheric_model(type="custom_atmosphere",                                                                                         
      wind_u=[                                                                                                          
          (0, 0), # 10.60 m/s at 0 m                                                                                
-         (4500, 0), # 10.60 m/s at 3000 m                                                                          
+         (4500, 0), # 10.60 m/s at 3000 m
      ],                                                                                                                
      wind_v=[                                                                                                          
          (0, 0), # -16.96 m/s at 3000 m   
-         (4500, 0)                                                                     
+         (4500, 0)
      ],)
 
 
@@ -205,8 +205,8 @@ Nemesis.add_sensor(barometer_clean, position=0)
 
 gnss_clean = GnssReceiver(  
     sampling_rate=50,
-    position_accuracy=0.1,  # 10cm accuratezza orizzontale  
-    altitude_accuracy=0.1,  # 10cm accuratezza verticale  
+    position_accuracy=0,
+    altitude_accuracy=0,
     name="Clean GPS"  
 )  
 Nemesis.add_sensor(gnss_clean, position=0)
@@ -232,13 +232,18 @@ def on_set_air_brakes(lvl):
     global deployment_level
     deployment_level = lvl
 
-def airbrakes_drag_function(deployment_level, mach):
-    base_drag_added = 0.0
-    return base_drag_added * deployment_level
+def airbrakes_drag_function(level, mach):
+    # linear approx
+    base_drag_added = 0.5
+    # print(f"[py] airbrakes_drag_function: {level}")
+    return base_drag_added * level
 
 def airbrakes_controller(time, sampling_rate, state_vector, state_history, observed_variables, interactive_objects):
     global deployment_level
-    return deployment_level
+    # print(f"[py] airbrakes_controller: {time:03.2f}, {deployment_level}")
+    airbrake = interactive_objects
+    airbrake.deployment_level = deployment_level
+    return airbrake
 
 counter = 0
 def enqueue_data(t, state, sensors):

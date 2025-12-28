@@ -185,8 +185,8 @@ static void rx_reset() {
   got = 0;
 }
 
+static char temp[50];
 void print_sensors(SimulationPayload28B sensors) {
-  static char temp[50];
   int min_width = 0;
   int precision = 4;
   dtostrf(sensors.ax, min_width, precision, temp);
@@ -211,12 +211,14 @@ void print_sensors(SimulationPayload28B sensors) {
   send_cmd_printf("alt=%s", temp);
 }
 
+static float maximum_altitude_reached = -1.0f;
+static float deployment_level = 1;
+static float deployed = 0;
 static void handle_sim_payload(const uint8_t* payload, uint8_t len) {
   // [ dump payload ]
   // for(int i = 0; i < len; i++) {
   //   send_cmd_printf("%x", payload[i]);
   // }
-
 
   if (len != SIM_PAYLOAD_LEN) {
     send_cmd_printf("E%d", ERR_MISMATCH_SIM_PAYLOAD_LEN);
@@ -227,20 +229,31 @@ static void handle_sim_payload(const uint8_t* payload, uint8_t len) {
   memcpy(&p, payload, sizeof(p));
   // print_sensors(p);
 
-
-  if (p.alt > 2500.0f && !drogue_deployed) {
+  if (maximum_altitude_reached > p.alt && !drogue_deployed) { // apogee
+    dtostrf(maximum_altitude_reached, 0, 4, temp);
+    send_cmd_printf("apogee=%s", temp);
     send_cmd_open_drogue();
     drogue_deployed = 1;
   }
 
-  static float deployment_level = 0.0;
-  if (!drogue_deployed && p.alt > 1000 && p.alt < 2000) {
-    send_cmd_set_air_brakes(deployment_level);
-    deployment_level += 0.01;
-    if (deployment_level > 1) {
-      deployment_level = 0;
-    }
+  if (maximum_altitude_reached < p.alt) { // new height record
+    maximum_altitude_reached = p.alt;
   }
+
+  if (!drogue_deployed && p.alt > 1000 && p.alt < 2000 && !deployed) { // open airbrakes at 1000m
+    send_cmd_set_air_brakes(deployment_level);
+    deployed = 1;
+    // deployment_level += 0.01;
+    // if (deployment_level > 1) {
+    //   deployment_level = 0;
+    // }
+  }
+  if (!drogue_deployed && p.alt > 2000 && deployed) { // close airbrakes at 2000m
+    deployed = 0;
+    deployment_level = 0;
+    send_cmd_set_air_brakes(deployment_level);
+  }
+
 
   if (p.alt < 450.0f && drogue_deployed && !main_deployed) {
     send_cmd_open_main();

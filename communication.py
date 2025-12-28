@@ -195,13 +195,13 @@ def start_serial_io_thread(
         elif cmd_id == CMD_PRINT:
             # print(f"[ESP32] {payload}")
             # print(f"[ESP32] {repr(payload)}")
-            print(f'\n[ESP32] {payload.decode("UTF-8")}')
+            print(f'[ESP32] {payload.decode("UTF-8")}')
             # print(f"len(payload): {len(payload)}")
             # print(f"[ESP32] {payload!r}")
 
         else: 
             # print("[py]: command {:03b} not recognized.".format(cmd_id))
-            print(f"[py]: command='{cmd_id}' with payload='{payload}' not recognized.")        
+            print(f"[py]: command='{cmd_id}' with payload='{payload}' not recognized.")
 
     def run():
         # TODO: stop the thread when simulation finished!
