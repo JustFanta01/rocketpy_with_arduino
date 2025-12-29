@@ -207,7 +207,7 @@ void print_sensors(SimulationPayload28B sensors) {
   dtostrf(sensors.lon, min_width, precision, temp);
   send_cmd_printf("lon=%s", temp);
   
-  dtostrf(sensors.lat, min_width, precision, temp);
+  dtostrf(sensors.alt, min_width, precision, temp);
   send_cmd_printf("alt=%s", temp);
 }
 
